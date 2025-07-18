@@ -20,3 +20,9 @@
 
 ### Actividad 03
 
+**1. En este sistemas físico interactivo identifica los inputs, outputs y el proceso.**  
+**R/** Outputs: Microbit, Los cambios de color en el Browser.
+Input: acelerometro, el serial/cable que envía los datos al computador para mostrar las animaciones, los botones. 
+Proceso: El proceso es el código que tienen los computadores/programa en javascript y python.
+
+### Actividad 04
