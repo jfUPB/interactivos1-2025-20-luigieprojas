@@ -25,4 +25,21 @@
 Input: acelerometro, el serial/cable que envía los datos al computador para mostrar las animaciones, los botones. 
 Proceso: El proceso es el código que tienen los computadores/programa en javascript y python.
 
-### Actividad 04
+### Actividad 04  
+[Este es el enlace a mi programa](https://editor.p5js.org/luigieprojas/sketches/0dpQVzKJf)
+## Imagen generada
+[Imagen] <img width="402" height="437" alt="image" src="https://github.com/user-attachments/assets/91734607-a966-431d-9042-48360f5ea3d8" />
+
+## Código
+```
+function setup() {
+  createCanvas(400, 400);
+}
+
+function draw() {
+  background(mouseX,10);
+  stroke(100);
+  fill('blue');
+  triangle(random(mouseX,mouseY),random(mouseX,mouseY),random(3,50),random(5,200), random(5,200),random(mouseX,50));
+}
+```
