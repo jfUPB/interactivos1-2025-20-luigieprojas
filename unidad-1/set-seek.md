@@ -27,10 +27,12 @@ Proceso: El proceso es el código que tienen los computadores/programa en javasc
 
 ### Actividad 04  
 [Este es el enlace a mi programa](https://editor.p5js.org/luigieprojas/sketches/0dpQVzKJf)
-## Imagen generada
+
+**Imagen generada**
 [Imagen] <img width="402" height="437" alt="image" src="https://github.com/user-attachments/assets/91734607-a966-431d-9042-48360f5ea3d8" />
 
-## Código
+**Código**
+
 ```
 function setup() {
   createCanvas(400, 400);
