@@ -4,6 +4,9 @@
 
 ## Actividad 05  
 **1. Explica cómo funciona el sistema físico interactivo que acabamos de crear.**  
+
+**R/** Lo primero que hicimos fue crear el canva en p5js, luego decidimos crear un cuadrado. En el microbit editor primero hacemos que para confirmar que la señal está llegando el microbit se volviera una mariposa o carita feliz. Luego creamos un codigo donde cada 100 milisegundos el programa recibe "N" del serial conectado al microbit, cuando recibe esto se colorea de verde el cuadrado que habiamos creado. Por último hicimos que cuando se oprimiera el botón B del microbit este enviara "A" al programa en el browser y que este cambiara a color rojo en p5js.
+
 ## Actividad 06  
 **1. Escribe el enlace a tu programa en el editor de p5.js.**  
 **R/** [Enlace](https://editor.p5js.org/luigieprojas/sketches/-kIGASyyY)  
