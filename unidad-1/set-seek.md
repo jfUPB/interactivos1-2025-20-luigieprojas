@@ -34,7 +34,7 @@ Proceso: El proceso es el código que tienen los computadores/programa en javasc
 
 **Código**
 
-```
+``` js
 function setup() {
   createCanvas(400, 400);
 }
