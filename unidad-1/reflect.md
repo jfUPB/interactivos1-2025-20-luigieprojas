@@ -60,13 +60,20 @@ La diferencia principal es que el código de mi compañera responde solo cuando 
 
 **¿Qué actividad, video o ejemplo de esta unidad te resultó más inspirador o te ayudó más a entender el potencial de los sistemas físicos interactivos?**  
 
-**R/** A mi me resultó muy inspirador el video donde se usan los sistemas físicos interactivos en conciertos musicales y el que esta con una banda en vivo, me inspiró mucho ya que me interesa mucho el tema de la música, quiero hacer mis temas y tener mi público, por lo que entender estos temas me motivan a aprender a hacer visuales para mi carrera sin tener que pedir ayuda a nadie y hacerlo todo a mi gusto.
+**R/** A mi me resultó muy inspirador el video donde se usan los sistemas físicos interactivos en conciertos musicales y el que esta con una banda en vivo, me inspiró mucho ya que me interesa mucho el tema de la música, quiero hacer mis temas y tener mi público, por lo que entender estos temas me motivan a aprender a hacer visuales para mi carrera sin tener que pedir ayuda a nadie y hacerlo todo a mi gusto.  
 
-**¿Hubo alguna parte que te pareció demasiado abstracta, muy rápida o confusa? ¿Hay algo que crees que podríamos cambiar para que sea más claro?**
+**¿Hubo alguna parte que te pareció demasiado abstracta, muy rápida o confusa? ¿Hay algo que crees que podríamos cambiar para que sea más claro?**  
 
 **R/** La verdad a mi me confunde un poco el tema de los comandos para programar, no tanto pero si tuviera que decir uno diría esto a la hora de programar. Quisiera repasarlos bien ya que me parece lo más fundamental a la hora de crear arte generativo.  
 
 **Qué te genera más curiosidad ahora? ¿Te gustaría explorar más sensores del micro:bit (luz, temperatura), crear visualizaciones más complejas en p5.js o ver más ejemplos de proyectos artísticos?**  
 
-**R/**  A mi me interesaría ver más sensores y crear visualizaciones más complejas, sé que todavía falta pero quiero hacer visualizaciones con 3d, me imagino como se vería y me gusta. Esas 2 principalmente aunque ver más ejemplo me podría dar más inspiración.
+**R/**  A mi me interesaría ver más sensores y crear visualizaciones más complejas, sé que todavía falta pero quiero hacer visualizaciones con 3d, me imagino como se vería y me gusta. Esas 2 principalmente aunque ver más ejemplo me podría dar más inspiración.  
 
+**Balance inspiración vs. técnica: ¿Cómo sentiste el equilibrio entre ver los videos inspiradores de la Actividad 01 y la parte técnica de conectar las herramientas en las actividades 03-06?**  
+
+**R/** La verdad me gustó porque de primeras ver el producto final el cual puedo alcanzar me da energías para prestar atención y dar lo mejor de mi, y ya cuando estuvimos creando por nosotros mismos estos visuales fue algo muy entretenido e interactivo, me gustó mucho experimentar libremente con estas herramientas, ya que no sentí presión por notas o algo por el estilo y di paso totalmente a mi creatividad.  
+
+**¿Hay algo más que quieras compartir sobre tu experiencia en esta unidad introductoria?**  
+
+**R/** La verdad no, creo que ya está todo dicho, solamente quiero mejorar más y subir mi nivel ya que considero que puedo dar mucho más de mi.
