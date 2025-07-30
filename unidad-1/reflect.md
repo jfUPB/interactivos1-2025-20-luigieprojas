@@ -45,3 +45,28 @@ El output sería la pantalla del ordenador, más específicamente en p5js, ya qu
 **El tutorial de la Actividad 05 te llevó paso a paso. ¿Cómo te sentiste con ese método de aprendizaje? ¿Te dio seguridad o preferirías haberlo intentado por tu cuenta desde el principio?**
 
 **R/**  Yo creo que debería ser una combinación de los dos, sé que por el tiempo es díficil explicar detalladamente a cada estudiante pero siento que sería mejor tener el código final aparte, e ir construyendolo en grupo (para crear ese pensamiento crítico) línea por línea entendiendolas al 100% y ya llegar al código final.
+
+**Actividad 08**
+
+**Tu compañero resolvió el problema de manera diferente a ti, qué hizo diferente, qué aprendiste de su solución. En tu bitácora documenta lo anterior y escribe, como si le estuvieras explicando, lo que tú hiciste y por qué es diferente a lo que hizo tu compañero.**
+
+**R/** Mi compañera resolvió el ejercicio de una forma diferente a la mía. Ella simplemente programó el micro:bit para que cuando se presione el botón A envíe una "A", y cuando se presione el botón B envíe una "B". Luego, en p5.js, esas letras se usan para mover el círculo directamente a la derecha o a la izquierda, sumando o restando 10 píxeles en la posición x. Es una solución sencilla y funcional que responde al problema.
+
+Lo que yo hice fue implementar tres estados distintos: cuando se presiona A, el círculo se mueve a la izquierda; cuando se presiona B (en mi código se representa con la letra "N"), se mueve a la derecha; y cuando no se presiona ningún botón, el círculo se queda quieto (estado "0"). Además, le añadí un extra visual: el color del círculo cambia dependiendo del estado, rojo si va a la izquierda, verde si va a la derecha, y gris si está quieto. Esto no se pedía en el ejercicio, pero lo agregué para hacer más clara la respuesta visual en pantalla.
+
+La diferencia principal es que el código de mi compañera responde solo cuando se presiona un botón y hace un movimiento puntual, mientras que el mío mantiene un estado continuo de dirección hasta que se cambie. También integré el cambio de color como un elemento adicional de retroalimentación. Ambas soluciones cumplen el objetivo, solo que con enfoques diferentes.
+
+**Actividad 09**  
+
+**¿Qué actividad, video o ejemplo de esta unidad te resultó más inspirador o te ayudó más a entender el potencial de los sistemas físicos interactivos?**  
+
+**R/** A mi me resultó muy inspirador el video donde se usan los sistemas físicos interactivos en conciertos musicales y el que esta con una banda en vivo, me inspiró mucho ya que me interesa mucho el tema de la música, quiero hacer mis temas y tener mi público, por lo que entender estos temas me motivan a aprender a hacer visuales para mi carrera sin tener que pedir ayuda a nadie y hacerlo todo a mi gusto.
+
+**¿Hubo alguna parte que te pareció demasiado abstracta, muy rápida o confusa? ¿Hay algo que crees que podríamos cambiar para que sea más claro?**
+
+**R/** La verdad a mi me confunde un poco el tema de los comandos para programar, no tanto pero si tuviera que decir uno diría esto a la hora de programar. Quisiera repasarlos bien ya que me parece lo más fundamental a la hora de crear arte generativo.  
+
+**Qué te genera más curiosidad ahora? ¿Te gustaría explorar más sensores del micro:bit (luz, temperatura), crear visualizaciones más complejas en p5.js o ver más ejemplos de proyectos artísticos?**  
+
+**R/**  A mi me interesaría ver más sensores y crear visualizaciones más complejas, sé que todavía falta pero quiero hacer visualizaciones con 3d, me imagino como se vería y me gusta. Esas 2 principalmente aunque ver más ejemplo me podría dar más inspiración.
+
