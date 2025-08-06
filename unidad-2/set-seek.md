@@ -133,37 +133,39 @@ semaforo = Semaforo()
 while True:
     semaforo.update()
 ```
-**R/** 
+**R/**  
+
 Estados del semáforo:
 
--"Rojo": El LED superior está encendido.
--"Verde": El LED inferior está encendido.
--"Amarillo": El LED central está encendido.
+-"Rojo": El LED superior está encendido.  
+-"Verde": El LED inferior está encendido.  
+-"Amarillo": El LED central está encendido.  
 
 Eventos del programa:
 
 Tiempo transcurrido:
 
--Si pasan más de 3 segundos en "Rojo", se cambia a "Verde".
--Si pasan más de 3 segundos en "Verde", se cambia a "Amarillo".
--Si pasa más de 1 segundo en "Amarillo", se vuelve a "Rojo".
+-Si pasan más de 3 segundos en "Rojo", se cambia a "Verde".  
+-Si pasan más de 3 segundos en "Verde", se cambia a "Amarillo".  
+-Si pasa más de 1 segundo en "Amarillo", se vuelve a "Rojo".  
 
 "Rojo":
 
--Se limpia la pantalla.
-_Se enciende el LED (2,0) para representar la luz roja.
-_Se espera 3 segundos.
+-Se limpia la pantalla.  
+_Se enciende el LED (2,0) para representar la luz roja.  
+_Se espera 3 segundos.  
 
 "Verde":
 
--Se limpia la pantalla.
--Se enciende el LED (2,4) para la luz verde.
--Se espera 3 segundos.
+-Se limpia la pantalla.  
+-Se enciende el LED (2,4) para la luz verde.  
+-Se espera 3 segundos.  
 
 "Amarillo":
 
--Se limpia la pantalla.
--Se enciende el LED (2,2) como luz amarilla.
--Se espera 1 segundo.
+-Se limpia la pantalla.  
+-Se enciende el LED (2,2) como luz amarilla.  
+-Se espera 1 segundo.  
+
 
 
