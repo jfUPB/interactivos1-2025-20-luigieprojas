@@ -24,8 +24,10 @@ Profe aquí esta mi corrección de la actividad 04 y 05. Me pidió que corrigier
 
 ![Imagen de WhatsApp 2025-08-15 a las 14 44 52_62f1f3a9](https://github.com/user-attachments/assets/15a11a36-8391-4f23-bca1-653f858655ad)
 
-**Actividad 05** 
+**Actividad 05**  
+
 Vectores de prueba:
+
 1. Ajuste de tiempo en estado "Configuración"
 
 - Con el micro:bit encendido y en estado Configuración, presionar botón A repetidas veces hasta alcanzar el límite superior (60 segundos). Verificar que el valor no sobrepase 60.
@@ -61,5 +63,6 @@ Vectores de prueba:
 - En estado Explotado, tocar el logo táctil.
 
 - Confirmar que el estado vuelva a Configuración, que el tiempo se reinicie a 20 y que la pantalla quede limpia.
+
 
 
