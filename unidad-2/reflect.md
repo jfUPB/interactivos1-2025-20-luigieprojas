@@ -16,5 +16,50 @@ Ahora que entiendes el patrón de máquina de estados, ¿En qué otro tipo de pr
 Actividad 07
 Coevaluación
 
+**CORRECCIONES**
+
+Profe aquí esta mi corrección de la actividad 04 y 05. Me pidió que corrigiera el diagrama de estados y los vectores de prueba.
+
+**Actividad 04**  
+
+![Imagen de WhatsApp 2025-08-15 a las 14 44 52_62f1f3a9](https://github.com/user-attachments/assets/15a11a36-8391-4f23-bca1-653f858655ad)
+
+**Actividad 05** 
+Vectores de prueba:
+1. Ajuste de tiempo en estado "Configuración"
+
+- Con el micro:bit encendido y en estado Configuración, presionar botón A repetidas veces hasta alcanzar el límite superior (60 segundos). Verificar que el valor no sobrepase 60.
+
+- Presionar botón B repetidas veces hasta alcanzar el límite inferior (10 segundos). Verificar que no disminuya de 10.
+
+- Alternar entre A y B para confirmar que el incremento y decremento funcionan en cualquier orden.
+
+- Verificar que siempre se muestre en pantalla el último dígito del tiempo configurado.
+
+2. Transición de "Configuración" a "Armado"
+
+- Ajustar cualquier tiempo válido (10–60 segundos).
+
+- Agitar el micro:bit (gesto “shake”) y verificar que el estado cambie a Armado, que se muestre el tiempo configurado mediante scroll y que inicie la cuenta regresiva.
+
+3. Cuenta regresiva en "Armado"
+
+- Confirmar que el tiempo disminuya en intervalos de 1 segundo reales.
+
+- Verificar que el último dígito se muestre y se actualice cada 500 ms.
+
+- Probar con valores bajos (ej. 10 segundos) y altos (ej. 60 segundos) para confirmar que la lógica funciona en ambos extremos.
+
+4. Transición de "Armado" a "Explotado"
+
+- Permitir que la cuenta regresiva llegue a cero.
+
+- Verificar que la pantalla se limpie y suene la melodía WAWAWAWAA.
+
+5. Reinicio desde "Explotado" a "Configuración"
+
+- En estado Explotado, tocar el logo táctil.
+
+- Confirmar que el estado vuelva a Configuración, que el tiempo se reinicie a 20 y que la pantalla quede limpia.
 
 
