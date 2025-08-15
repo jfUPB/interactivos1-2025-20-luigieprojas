@@ -1,20 +1,47 @@
 # Unidad 2
 
-Parte 1: recuperación de conocimiento (Retrieval Practice)
+**Reflect: Consolidación y metacognición 🤔**  
 
-Describe con tus palabras qué es una máquina de estados. ¿Cuáles son sus cuatro componentes fundamentales que has utilizado en esta unidad?
-Explica por qué la técnica de máquina de estados es tan útil para gestionar la “concurrencia” (atender un temporizador y botones “al mismo tiempo”) en un dispositivo con un solo hilo de ejecución como el micro:bit. ¿Qué problema soluciona en comparación con usar funciones como sleep()?
-Imagina que tienes que añadir una nueva funcionalidad a la bomba temporizada: si se agita (shake) el micro:bit mientras la cuenta regresiva está activa, el tiempo se reduce a la mitad. ¿Cómo modificarías tu diagrama de máquina de estados para incluir este nuevo evento y acción?
-Explica qué es un “vector de prueba” y por qué es una herramienta crucial para verificar que una máquina de estados funciona como se espera.
-Parte 2: reflexión sobre tu proceso (Metacognición)
+**Actividad 06**   
 
-¿Qué parte del diseño de la bomba temporizada te resultó más desafiante: crear el diagrama de estados (Actividad 04) o traducir ese diagrama a código MicroPython (Actividad 05)? ¿Por qué?
-Describe un error o “bug” que encontraste al implementar tu programa. ¿Cómo te ayudó pensar en términos de estados, eventos y transiciones a identificar y solucionar el problema?
-El problema de la bomba era complejo. ¿Qué estrategia usaste para abordarlo? ¿Comenzaste con una versión simple y añadiste funcionalidades poco a poco?
-Ahora que entiendes el patrón de máquina de estados, ¿En qué otro tipo de proyecto o sistema de entretenimiento digital crees que podrías aplicarlo?
-## 🤔 Fase: Reflect
-Actividad 07
-Coevaluación
+**Autoevaluación**  
+
+**Parte 1: recuperación de conocimiento (Retrieval Practice)**
+
+**Describe con tus palabras qué es una máquina de estados. ¿Cuáles son sus cuatro componentes fundamentales que has utilizado en esta unidad?**  
+
+**R/** Una máquina de estados es una forma de organizar un programa dividiéndolo en “estados” que hacen cosas diferentes, y que cambian según eventos. En esta unidad usamos: estados, eventos, acciones y transiciones.
+
+**Explica por qué la técnica de máquina de estados es tan útil para gestionar la “concurrencia” (atender un temporizador y botones “al mismo tiempo”) en un dispositivo con un solo hilo de ejecución como el micro:bit. ¿Qué problema soluciona en comparación con usar funciones como sleep()?**  
+
+**R/** Sirve mucho para manejar cosas “al mismo tiempo” en un micro:bit, como un temporizador y botones, porque no se queda “dormido” con sleep() y así el programa sigue respondiendo mientras cuenta el tiempo.
+
+**Imagina que tienes que añadir una nueva funcionalidad a la bomba temporizada: si se agita (shake) el micro:bit mientras la cuenta regresiva está activa, el tiempo se reduce a la mitad. ¿Cómo modificarías tu diagrama de máquina de estados para incluir este nuevo evento y acción?**  
+
+**R/** Si quisiera que al agitar el micro:bit en cuenta regresiva se reduzca el tiempo a la mitad, en el diagrama pondría un evento nuevo dentro del estado “Armado” que al detectar “shake” ejecute la acción de dividir el tiempo entre 2.
+
+**Explica qué es un “vector de prueba” y por qué es una herramienta crucial para verificar que una máquina de estados funciona como se espera.**   
+
+**R/** Un vector de prueba es una lista de pasos con entradas y salidas esperadas para ver si la máquina funciona bien. Sirve porque así comprobamos todo sin tener que adivinar si anda bien.
+
+**Parte 2: reflexión sobre tu proceso (Metacognición)**
+
+**¿Qué parte del diseño de la bomba temporizada te resultó más desafiante: crear el diagrama de estados (Actividad 04) o traducir ese diagrama a código MicroPython (Actividad 05)? ¿Por qué?**  
+
+**R/** Lo más difícil fue hacer el diagrama de estados, porque hay que pensar en toda la lógica antes de programar, y la verdad hice muchas pruebas y errores creando muchos diagramas hasta que al final pude encontrar uno que se adaptara al problema.
+
+**Describe un error o “bug” que encontraste al implementar tu programa. ¿Cómo te ayudó pensar en términos de estados, eventos y transiciones a identificar y solucionar el problema?**  
+
+**R/** Uno de los bugs que encontré fue que, al llegar el temporizador a cero, la bomba no pasaba al estado Explotado como debía. Pensar en términos de estados, eventos y transiciones me ayudó a detectar que el evento “tiempo <= 0” estaba evaluándose en el lugar equivocado dentro del código y, por eso, no se ejecutaba la transición. Lo corregí moviendo esa verificación dentro del ciclo que gestiona el estado Armado.
+
+**El problema de la bomba era complejo. ¿Qué estrategia usaste para abordarlo? ¿Comenzaste con una versión simple y añadiste funcionalidades poco a poco?**  
+
+**R/** Mi estrategia fue empezar con una versión muy básica: solo dos estados y el temporizador funcionando. Una vez que esa parte estaba estable, fui agregando funciones como la configuración del tiempo, la señal visual de armado y, por último, los sonidos. Esto me permitió depurar cada bloque sin que todo se enredara.
+
+**Ahora que entiendes el patrón de máquina de estados, ¿En qué otro tipo de proyecto o sistema de entretenimiento digital crees que podrías aplicarlo?**  
+
+**R/** Podría usar máquinas de estados en videojuegos, por ejemplo para manejar los diferentes modos de un personaje (quieto, corriendo, atacando, saltando) sin enredarme con el código.
+
 
 **CORRECCIONES**
 
@@ -63,6 +90,7 @@ Vectores de prueba:
 - En estado Explotado, tocar el logo táctil.
 
 - Confirmar que el estado vuelva a Configuración, que el tiempo se reinicie a 20 y que la pantalla quede limpia.
+
 
 
 
