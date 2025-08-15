@@ -56,13 +56,14 @@ Vectores de prueba:
 
 - Permitir que la cuenta regresiva llegue a cero.
 
-- Verificar que la pantalla se limpie y suene la melodía WAWAWAWAA.
+- Verificar que la pantalla se limpie y suene la melodía del micro:bit que representa la exploción.
 
 5. Reinicio desde "Explotado" a "Configuración"
 
 - En estado Explotado, tocar el logo táctil.
 
 - Confirmar que el estado vuelva a Configuración, que el tiempo se reinicie a 20 y que la pantalla quede limpia.
+
 
 
 
