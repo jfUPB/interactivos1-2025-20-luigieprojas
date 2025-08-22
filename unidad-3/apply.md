@@ -2,13 +2,14 @@
 
 ## 🛠 Fase: Apply
 
-Actividad 06
+## Actividad 06
+
 Crear la bomba en p5.js
 En esta actividad vas a transferir la técnica de programación con máquinas de estado a p5.js.
 
 Crea la bomba versión 2.0 en p5.js. No olvides que al aplicar la técnica de máquinas de estado en micro:bit se evitaba colocar acciones por fuera de los eventos. En el caso de p5.js será necesario que tengas acciones por fuera de eventos porque es necesario dibujar el canvas en cada frame.
 
-Respuesta: 
+**Respuesta:** 
 
 ```
 let teclasValidas = "ABST";  
@@ -105,5 +106,146 @@ function keyPressed() {
       }     
     }   
   } 
+}
+```
+
+## Actividad 07
+
+Bomba en p5.js + controles del micro:bit
+Vas a practicar de nuevo la técnica de máquina de estados y eventos genéricos, pero esta vez vas a controlar la bomba desde el micro:bit y desde p5.js. TEN PRESENTE que la bomba estará corriendo en p5.js, pero deberás controlarla también desde los botones del micro:bit mediante el puerto serial.
+
+**Respuesta:** 
+
+```
+let puerto;
+let botonConexion;
+let conexionLista = false;
+
+let teclasPermitidas = "ABST";  
+let activa = false;      
+let detonada = false;
+let neutralizada = false;
+let entradaCodigo = "";            
+const codigoClave = "ABA";  
+let segundos = 0; 
+let tiempoConfig = 20;  
+
+function setup() {   
+  createCanvas(400, 400);   
+  textSize(16);
+  segundos = tiempoConfig; 
+
+  puerto = createSerial();
+  botonConexion = createButton("Conectar micro:bit");
+  botonConexion.position(100, 360);
+  botonConexion.mousePressed(alternarConexion);
+}  
+
+function draw() {   
+  background(230);   
+  textAlign(CENTER);   
+  
+  if (puerto.opened() && !conexionLista) {
+    puerto.clear();
+    conexionLista = true;
+  }
+
+  if (detonada) {
+    text("¡¡EXPLOSIÓN!!", width / 2, height / 2);  
+    text("Pulsa T para reiniciar", width / 2, height / 2 + 40);  
+    return;
+  }
+
+  if (neutralizada) {
+    text("Bomba desactivada", width / 2, height / 2);  
+    text("Pulsa T para reiniciar", width / 2, height / 2 + 40);  
+    return;
+  }
+
+  text("Tiempo configurado: " + tiempoConfig + "s", width / 2, 40);
+
+  if (activa) {
+    let tiempo = max(0, floor(segundos - millis()/1000));
+    text("Contador activo", width / 2, height / 2 - 20);
+    text("Ingresa el código secreto", width / 2, height / 2 + 10);
+    text("Tiempo restante: " + tiempo + "s", width / 2, height / 2 + 40);
+
+    if (tiempo <= 0) {       
+      activa = false;       
+      detonada = true;     
+    }   
+  } else {     
+    text("Presiona 'S' para activar bomba", width / 2, height / 2 + 20);   
+  } 
+
+  if (!puerto.opened()) {
+    botonConexion.html("Conectar micro:bit");
+  } else {
+    botonConexion.html("Desconectar");
+  }
+}
+
+function keyPressed() {   
+  let tecla = key.toUpperCase();   
+
+  // Enviar por serial solo si está conectado
+  if (teclasPermitidas.includes(tecla) && puerto.opened()) {
+    puerto.write(tecla);
+  }
+
+  if (tecla === 'T') {
+    activa = false;
+    detonada = false;
+    neutralizada = false;
+    entradaCodigo = "";
+    tiempoConfig = 20;
+    segundos = tiempoConfig;
+    return;
+  }
+
+  if (tecla === 'A') {
+    tiempoConfig += 1;
+    segundos = millis()/1000 + tiempoConfig;
+  }
+  if (tecla === 'B') {
+    if (tiempoConfig > 1) { 
+      tiempoConfig -= 1;
+      segundos = millis()/1000 + tiempoConfig;
+    }
+  }
+
+  if (teclasPermitidas.includes(tecla)) {     
+    console.log("Tecla presionada:" + tecla);      
+
+    if (activa) {       
+      entradaCodigo += tecla;       
+      if (entradaCodigo.length > 3) {         
+        entradaCodigo = entradaCodigo.slice(-3);        
+      }        
+
+      if (entradaCodigo === codigoClave) {         
+        activa = false;         
+        neutralizada = true;         
+        entradaCodigo = "";         
+        console.log("Bomba neutralizada");       
+      }     
+    } else {       
+      if (tecla === 'S') {         
+        activa = true;         
+        entradaCodigo = "";         
+        segundos = millis()/1000 + tiempoConfig;         
+        console.log("Bomba activada");       
+      }     
+    }   
+  } 
+}
+
+function alternarConexion() {
+  if (!puerto.opened()) {
+    puerto.open("MicroPython", 115200);
+    conexionLista = false;
+  } else {
+    puerto.close();
+  }
 }
 ```
