@@ -1,8 +1,60 @@
 ### Actividad 01
 
 - Describe cómo se están comunicando el micro:bit y el sketch de p5.js. ¿Qué datos envía el micro:bit?
+R/ El micro:bit envía datos a través de la comunicación serial UART a 115200 baudios.
+
+En cada ciclo (while True:) envía 4 valores separados por comas y terminados en salto de línea:
+
+xValue: acelerómetro en eje X
+
+yValue: acelerómetro en eje Y
+
+aState: estado del botón A (True o False)
+
+bState: estado del botón B (True o False)
+
 - ¿Cómo es la estructura del protocolo ASCII usado?
+R/ El micro:bit envía todo como texto plano ASCII (no binario).
+
+La estructura es:
+
+xValue,yValue,aState,bState\n
+
+
+Donde:
+
+Los valores numéricos (xValue, yValue) se envían como enteros en ASCII.
+
+Los estados de los botones (aState, bState) se envían como "True" o "False".
+
+Cada mensaje termina con \n (salto de línea), lo que facilita que p5.js lo lea “línea por línea”.
 - Muestra y explica la parte del código de p5.js donde lee los datos del micro:bit y los transforma en coordenadas de la pantalla.
+R/ 
+```
+if (port.availableBytes() > 0) {
+  let data = port.readUntil("\n");
+  if (data) {
+    data = data.trim();
+    let values = data.split(",");
+    if (values.length == 4) {
+      microBitX = int(values[0]) + windowWidth / 2;
+      microBitY = int(values[1]) + windowHeight / 2;
+      microBitAState = values[2].toLowerCase() === "true";
+      microBitBState = values[3].toLowerCase() === "true";
+      updateButtonStates(microBitAState, microBitBState);
+    }
+  }
+}
+```
+port.readUntil("\n"): lee una línea completa enviada por el micro:bit.
+
+data.split(","): separa los 4 valores que venían separados por comas.
+
+microBitX y microBitY: convierten los valores x e y del acelerómetro en enteros y les suman la mitad de la pantalla para que la referencia quede centrada.
+
+microBitAState y microBitBState: transforman "True" o "False" en valores booleanos.
+
+Luego se llama a updateButtonStates(...) para generar eventos en función de los botones.
 - ¿Cómo se generan los eventos A pressed y B released que se generan en p5.js a partir de los datos que envía el micro:bit?
 - Capturas de pantalla de los algunos dibujos que hayas hecho con el sketch.
 
