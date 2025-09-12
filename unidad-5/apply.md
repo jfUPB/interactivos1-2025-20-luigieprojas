@@ -6,6 +6,8 @@
 - ¿Cómo se generan los eventos A pressed y B released que se generan en p5.js a partir de los datos que envía el micro:bit?
 - Capturas de pantalla de los algunos dibujos que hayas hecho con el sketch.
 
+### Actividad 02
+
 Abre la aplicación, configura el puerto, deja los valores por defecto y presiona Conectar. Selecciona el puerto del micro:bit (mbed Serial port) y presiona Conectar. Luego, en la sección de Recepción de Datos, en Mostrar datos como, selecciona Texto.
 
 🧐🧪✍️ Captura el resultado del experimento anterior. ¿Por qué se ve este resultado?
@@ -44,3 +46,15 @@ while True:
 Ahora realiza el siguiente experimento para comparar el envío de datos en ASCII y en binario.
 
 🧐🧪✍️ Captura el resultado del experimento. ¿Qué diferencias ves entre los datos en ASCII y en binario? ¿Qué ventajas y desventajas ves en usar un formato binario en lugar de texto en ASCII? ¿Qué ventajas y desventajas ves en usar un formato ASCII en lugar de binario?
+
+### Actividad 03
+
+🧐🧪✍️ Explica por qué en la unidad anterior teníamos que enviar la información delimitada y además marcada con un salto de línea y ahora no es necesario.
+
+🧐🧪✍️ Compara el código de la unidad anterior relacionado con la recepción de los datos seriales que ves ahora. ¿Qué cambios observas?
+
+🧐🧪✍️ Analiza el código, observa los cambios. Ejecuta y luego observa la consola. ¿Qué ves?
+
+🧐🧪✍️ ¿Qué ves en la consola? ¿Por qué crees que se produce este error?
+
+🧐🧪✍️ ¿Qué cambios tienen los programas y ¿Qué puedes observar en la consola del editor de p5.js?
