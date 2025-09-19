@@ -64,9 +64,19 @@ Abre la aplicación, configura el puerto, deja los valores por defecto y presion
 
 🧐🧪✍️ Captura el resultado del experimento anterior. ¿Por qué se ve este resultado?
 
+**R/**
+
+https://github.com/user-attachments/assets/c9b60969-bd76-43be-8d09-a37a801d8818
+
+
 Ahora cambia la opción de Mostrar datos como a Todo en Hex y vuelve a capturar el resultado.
 
 🧐🧪✍️ Captura el resultado del experimento anterior. Lo que ves ¿Cómo está relacionado con esta línea de código?
+
+**R/**  
+
+https://github.com/user-attachments/assets/c9de5de0-6337-4be3-bb87-6ed0d02e373b
+
 ```
 data = struct.pack('>2h2B', xValue, yValue, int(aState), int(bState))
 ```
@@ -75,6 +85,7 @@ No te parece que el resultado es un poco más difícil de leer que el texto en A
 🧐🧪✍️ ¿Qué ventajas y desventajas ves en usar un formato binario en lugar de texto en ASCII?
 
 Ahora te voy a proponer un experimento que te permitirá ver mejor los datos. Cambia el código del micro:bit por este:
+
 ```
 # Imports go at the top
 from microbit import *
@@ -93,11 +104,21 @@ while True:
 ```
 🧐🧪✍️ Captura el resultado del experimento. ¿Cuántos bytes se están enviando por mensaje? ¿Cómo se relaciona esto con el formato '>2h2B'? ¿Qué significa cada uno de los bytes que se envían?
 
+R/ 
+
+https://github.com/user-attachments/assets/937b6a5c-bb98-430b-95a9-0984381c0dc7
+
+
 🧐🧪✍️ Recuerda de la unidad anterior que es posible enviar números positivos y negativos para los valores de xValue y yValue. ¿Cómo se verían esos números en el formato '>2h2B'?
 
 Ahora realiza el siguiente experimento para comparar el envío de datos en ASCII y en binario.
 
 🧐🧪✍️ Captura el resultado del experimento. ¿Qué diferencias ves entre los datos en ASCII y en binario? ¿Qué ventajas y desventajas ves en usar un formato binario en lugar de texto en ASCII? ¿Qué ventajas y desventajas ves en usar un formato ASCII en lugar de binario?
+
+R/
+
+https://github.com/user-attachments/assets/606fcec3-7dac-4218-a8a4-4c48fdb31fb7
+
 
 ### Actividad 03
 
@@ -108,5 +129,11 @@ Ahora realiza el siguiente experimento para comparar el envío de datos en ASCII
 🧐🧪✍️ Analiza el código, observa los cambios. Ejecuta y luego observa la consola. ¿Qué ves?
 
 🧐🧪✍️ ¿Qué ves en la consola? ¿Por qué crees que se produce este error?
+
+R/ 
+
+
+https://github.com/user-attachments/assets/3130a4d1-7cd4-44f9-a739-066b055159d7
+
 
 🧐🧪✍️ ¿Qué cambios tienen los programas y ¿Qué puedes observar en la consola del editor de p5.js?
