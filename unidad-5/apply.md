@@ -58,6 +58,13 @@ Luego se llama a updateButtonStates(...) para generar eventos en función de los
 - ¿Cómo se generan los eventos A pressed y B released que se generan en p5.js a partir de los datos que envía el micro:bit?
 - Capturas de pantalla de los algunos dibujos que hayas hecho con el sketch.
 
+<img width="1323" height="660" alt="Captura de pantalla 2025-09-10 165829" src="https://github.com/user-attachments/assets/a26ca5c8-2d03-403f-98a7-46eb0a85fd3a" />
+
+<img width="1321" height="660" alt="Captura de pantalla 2025-09-10 170038" src="https://github.com/user-attachments/assets/9be73e56-bec1-4eee-a4e8-e5c47cc3c649" />
+
+<img width="1327" height="658" alt="Captura de pantalla 2025-09-10 170813" src="https://github.com/user-attachments/assets/ce5d5040-7258-4c1a-9339-fc2748e6e7eb" />
+
+
 ### Actividad 02
 
 Abre la aplicación, configura el puerto, deja los valores por defecto y presiona Conectar. Selecciona el puerto del micro:bit (mbed Serial port) y presiona Conectar. Luego, en la sección de Recepción de Datos, en Mostrar datos como, selecciona Texto.
@@ -126,7 +133,7 @@ https://github.com/user-attachments/assets/606fcec3-7dac-4218-a8a4-4c48fdb31fb7
 
 🧐🧪✍️ Compara el código de la unidad anterior relacionado con la recepción de los datos seriales que ves ahora. ¿Qué cambios observas?
 
-🧐🧪✍️ Analiza el código, observa los cambios. Ejecuta y luego observa la consola. ¿Qué ves?
+
 
 🧐🧪✍️ ¿Qué ves en la consola? ¿Por qué crees que se produce este error?
 
@@ -135,5 +142,18 @@ R/
 
 https://github.com/user-attachments/assets/3130a4d1-7cd4-44f9-a739-066b055159d7
 
+🧐🧪✍️ Analiza el código, observa los cambios. Ejecuta y luego observa la consola. ¿Qué ves?
+
+R/ 
+
+https://github.com/user-attachments/assets/23701393-f164-46bf-b0d7-bdee5ea07557
+
 
 🧐🧪✍️ ¿Qué cambios tienen los programas y ¿Qué puedes observar en la consola del editor de p5.js?
+
+R/ 
+
+
+https://github.com/user-attachments/assets/e7d1cbf0-bcf7-4a75-8bc8-a601ef0d0d5b
+
+
