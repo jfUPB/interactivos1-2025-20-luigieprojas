@@ -320,3 +320,374 @@ Esto significa que el protocolo ahora tiene las tres cualidades clave:
 - Verificación de integridad (checksum de un byte).
 
 Por eso en este punto ya se puede dibujar normalmente como en la unidad anterior, pero con la ventaja de que los errores de transmisión no afectan la lógica ni la visualización.
+
+### Actividad 04
+
+Aplica lo aprendido
+
+Vas a modificar la misma aplicación de la fase de aplicación de la unidad anterior para que soporte el protocolo de datos binarios. La aplicación del micro:bit debe ser la misma que usaste en la actividad anterior:
+
+```
+from microbit import *
+import struct
+
+uart.init(115200)
+display.set_pixel(0, 0, 9)
+
+while True:
+    xValue = accelerometer.get_x()
+    yValue = accelerometer.get_y()
+    aState = button_a.is_pressed()
+    bState = button_b.is_pressed()
+    data = struct.pack('>2h2B', xValue, yValue, int(aState), int(bState))
+    checksum = sum(data) % 256
+    packet = b'\xAA' + data + bytes([checksum])
+    uart.write(packet)
+    sleep(100)
+```
+
+**Respuesta:** 
+
+
+https://github.com/user-attachments/assets/5df51c08-0f9a-4d9b-a97b-4653a937876f
+
+
+código skectch p5js:
+
+```
+'use strict';
+
+// ------------------ Variables micro:bit ------------------
+let port, reader;
+let microBitX = 0;
+let microBitY = 0;
+let microBitA = false;
+let microBitB = false;
+
+// Variables para detectar flancos (cambio de estado)
+let lastMicroBitA = false;
+let lastMicroBitB = false;
+
+const WAIT_MICROBIT_CONNECTION = 0;
+const RUNNING = 1;
+let state = WAIT_MICROBIT_CONNECTION;
+
+// ------------------ Generative Design vars ------------------
+var tileCount = 1;
+var actRandomSeed = 0;
+
+var colorLeft;
+var colorRight;
+
+var alphaLeft = 0;
+var alphaRight = 100;
+
+var transparentLeft = false;
+var transparentRight = false;
+
+// ------------------ Setup ------------------
+function setup() {
+  createCanvas(600, 600);
+  colorMode(HSB, 360, 100, 100, 100);
+
+  colorRight = color(0, 0, 0, alphaRight);
+  colorLeft = color(323, 100, 77, alphaLeft);
+}
+
+// ------------------ Draw ------------------
+function draw() {
+  if (state === WAIT_MICROBIT_CONNECTION) {
+    background(200);
+    fill(0);
+    textAlign(CENTER, CENTER);
+    text("Haz click en 'Conectar micro:bit'", width / 2, height / 2);
+    return;
+  }
+
+  if (state === RUNNING) {
+    clear();
+
+    // Reemplazar mouse con inclinación del micro:bit
+    let mappedX = map(microBitX, -1024, 1024, 0, width);
+    let mappedY = map(microBitY, -1024, 1024, 0, height);
+
+    strokeWeight(mappedX / 15);
+    randomSeed(actRandomSeed);
+    tileCount = mappedY / 15;
+
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+      for (var gridX = 0; gridX < tileCount; gridX++) {
+        var posX = width / tileCount * gridX;
+        var posY = height / tileCount * gridY;
+
+        alphaLeft = transparentLeft ? gridY * 10 : 100;
+        colorLeft = color(
+          hue(colorLeft),
+          saturation(colorLeft),
+          brightness(colorLeft),
+          alphaLeft
+        );
+
+        alphaRight = transparentRight ? 100 - gridY * 10 : 100;
+        colorRight = color(
+          hue(colorRight),
+          saturation(colorRight),
+          brightness(colorRight),
+          alphaRight
+        );
+
+        var toggle = int(random(0, 2));
+
+        if (toggle == 0) {
+          stroke(colorLeft);
+          line(
+            posX,
+            posY,
+            posX + (width / tileCount) / 2,
+            posY + height / tileCount
+          );
+          line(
+            posX + (width / tileCount) / 2,
+            posY,
+            posX + width / tileCount,
+            posY + height / tileCount
+          );
+        }
+
+        if (toggle == 1) {
+          stroke(colorRight);
+          line(
+            posX,
+            posY + width / tileCount,
+            posX + (height / tileCount) / 2,
+            posY
+          );
+          line(
+            posX + (height / tileCount) / 2,
+            posY + width / tileCount,
+            posX + (height / tileCount),
+            posY
+          );
+        }
+      }
+    }
+
+    // --------- Micro:bit buttons control (solo en "click") ---------
+    if (!lastMicroBitA && microBitA) {
+      actRandomSeed = random(100000);
+    }
+
+    if (!lastMicroBitB && microBitB) {
+      if (colorsEqual(colorLeft, color(273, 73, 51, alphaLeft))) {
+        colorLeft = color(323, 100, 77, alphaLeft);
+      } else {
+        colorLeft = color(273, 73, 51, alphaLeft);
+      }
+    }
+
+    // Actualizar estados anteriores
+    lastMicroBitA = microBitA;
+    lastMicroBitB = microBitB;
+  }
+}
+
+// ------------------ Mouse & Keys originales ------------------
+function mousePressed() {
+  actRandomSeed = random(100000);
+}
+
+function keyReleased() {
+  if (key == 's' || key == 'S') saveCanvas(gd.timestamp(), 'png');
+
+  if (key == '1') {
+    if (colorsEqual(colorLeft, color(273, 73, 51, alphaLeft))) {
+      colorLeft = color(323, 100, 77, alphaLeft);
+    } else {
+      colorLeft = color(273, 73, 51, alphaLeft);
+    }
+  }
+
+  if (key == '2') {
+    if (colorsEqual(colorRight, color(0, 0, 0, alphaRight))) {
+      colorRight = color(192, 100, 64, alphaRight);
+    } else {
+      colorRight = color(0, 0, 0, alphaRight);
+    }
+  }
+
+  if (key == '3') transparentLeft = !transparentLeft;
+  if (key == '4') transparentRight = !transparentRight;
+
+  if (key == '0') {
+    transparentLeft = false;
+    transparentRight = false;
+    colorLeft = color(323, 100, 77, alphaLeft);
+    colorRight = color(0, 0, 0, alphaRight);
+  }
+}
+
+function colorsEqual(col1, col2) {
+  return col1.toString() == col2.toString();
+}
+
+// ------------------ Serial Communication ------------------
+async function connectBtnClick() {
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    reader = port.readable.getReader();
+    state = RUNNING;
+    readLoop();
+  } catch (err) {
+    console.error("Error al conectar:", err);
+  }
+}
+
+async function readLoop() {
+  let buffer = new Uint8Array();
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+
+    // Concatenar al buffer existente
+    let tmp = new Uint8Array(buffer.length + value.length);
+    tmp.set(buffer, 0);
+    tmp.set(value, buffer.length);
+    buffer = tmp;
+
+    // Procesar mientras haya 8 bytes disponibles
+    while (buffer.length >= 8) {
+      // Buscar cabecera 0xAA
+      let start = buffer.indexOf(0xAA);
+      if (start === -1) {
+        buffer = new Uint8Array();
+        break;
+      }
+
+      if (buffer.length < start + 8) break;
+
+      // Extraer paquete
+      let packet = buffer.slice(start, start + 8);
+      buffer = buffer.slice(start + 8);
+
+      // Validar checksum
+      let data = packet.slice(1, 7);
+      let checksum = packet[7];
+      let sum = 0;
+      for (let b of data) sum += b;
+      if (sum % 256 !== checksum) {
+        console.warn("Checksum incorrecto, paquete descartado");
+        continue;
+      }
+
+      // Decodificar datos
+      let dv = new DataView(packet.buffer, packet.byteOffset, packet.byteLength);
+      microBitX = dv.getInt16(1, false); // big-endian
+      microBitY = dv.getInt16(3, false);
+      microBitA = dv.getUint8(5) === 1;
+      microBitB = dv.getUint8(6) === 1;
+    }
+  }
+}
+```
+En esta actividad partimos de la misma aplicación de la fase de aplicación de la unidad 4, que funcionaba con datos enviados como texto. Allí el micro:bit mandaba valores del acelerómetro y botones en formato delimitado por saltos de línea, y p5.js podía leerlos directamente como strings con readLine().
+
+El reto de la unidad 5 fue modificar esa misma aplicación para que ahora funcionara con un protocolo de datos binarios. Esto implicó dos cambios principales:
+
+1. En el micro:bit (emisor):
+
+- Usamos el módulo struct para empaquetar los datos en binario.
+- Definimos un formato fijo >2h2B, que incluye:
+
+  - xValue y yValue (acelerómetro, 16 bits cada uno).
+  - aState y bState (botones A y B, 8 bits cada uno).
+
+- Añadimos un checksum (suma de bytes % 256) para garantizar la integridad del paquete.
+- Cada paquete empieza con una cabecera 0xAA, que permite al receptor sincronizar la lectura.
+
+Ejemplo de envío en micro : bit:
+```
+data = struct.pack('>2h2B', xValue, yValue, int(aState), int(bState))
+checksum = sum(data) % 256
+packet = b'\xAA' + data + bytes([checksum])
+uart.write(packet)
+```
+En p5.js (receptor):
+
+- En lugar de leer texto línea a línea, ahora usamos DataView para interpretar directamente los bytes recibidos.
+- Implementamos un bucle de lectura (readLoop) que detecta la cabecera 0xAA, extrae los siguientes 6 bytes de datos y el byte de checksum.
+- Verificamos la integridad comparando la suma de los datos con el checksum recibido.
+- Convertimos los bytes en enteros (getInt16, getUint8) para recuperar los valores originales.
+
+Fragmento clave en p5.js: 
+
+```
+if (value.getUint8(0) === 0xAA) {
+  let xValue = value.getInt16(1);
+  let yValue = value.getInt16(3);
+  let aState = value.getUint8(5);
+  let bState = value.getUint8(6);
+  let checksum = value.getUint8(7);
+}
+```
+Relación con lo visto en la unidad 5:
+
+- Protocolos binarios: reemplazamos texto delimitado por paquetes compactos de bytes.
+- Cabecera y checksum: conceptos claves de esta unidad para estructurar la comunicación y validar errores.
+- Empaquetado/Desempaquetado: uso de struct en Python y DataView en JS para leer valores binarios.
+- Máquina de estados implícita: el receptor pasa por estados buscando cabecera -> leyendo datos -> verificando checksum.
+
+Acá esta un códgio beta/intermedio que logré rescatar y obviamente tiene varios errores que les puse un comentario para verlos más rápidamente:
+
+```
+let connectBtn;
+let isConnected = false;
+
+function setup() {
+  createCanvas(400, 200);
+  background(220);
+
+  // Crear botón
+  connectBtn = createButton("Conectar Micro:bit");
+  connectBtn.position(20, 20);
+
+  // ❌ ERROR: aquí llamamos a una función que no existe aún
+  connectBtn.mousePressed(connectBtnClick);
+}
+
+function draw() {
+  background(220);
+  textSize(16);
+
+  // Mostrar estado en pantalla
+  if (isConnected) {
+    text("Micro:bit conectado ✅", 20, 100);
+  } else {
+    text("Esperando conexión...", 20, 100);
+  }
+}
+
+// ❌ ERROR: Olvidamos definir connectBtnClick()
+// No existe ninguna función que maneje la conexión
+```
+
+Error 1:
+
+ReferenceError: connectBtnClick is not defined
+Causa: Llamamos a connectBtnClick en mousePressed sin haber creado la función.
+Solución: Crear la función connectBtnClick() que cambie el estado de isConnected.
+
+Error 2:
+
+El estado isConnected nunca cambia.
+Causa: Aunque la variable existe, nunca la modificamos.
+Solución: En connectBtnClick(), asignar isConnected = true;.
+
+Error 3:
+
+La aplicación no muestra intentos fallidos de conexión (poca retroalimentación).
+Causa: No hay un contador ni mensajes dinámicos.
+Solución: Añadir una variable intentos y mostrar cuántas veces se presionó el botón.
+
