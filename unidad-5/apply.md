@@ -675,6 +675,9 @@ function draw() {
 
 Error 1:
 
+<img width="1320" height="613" alt="image" src="https://github.com/user-attachments/assets/3cc3bcf6-26ad-4f14-8fd2-c40b7cdf4f69" />
+
+
 ReferenceError: connectBtnClick is not defined
 Causa: Llamamos a connectBtnClick en mousePressed sin haber creado la función.
 Solución: Crear la función connectBtnClick() que cambie el estado de isConnected.
@@ -690,4 +693,480 @@ Error 3:
 La aplicación no muestra intentos fallidos de conexión (poca retroalimentación).
 Causa: No hay un contador ni mensajes dinámicos.
 Solución: Añadir una variable intentos y mostrar cuántas veces se presionó el botón.
+
+**Retos**
+
+En la unidad 4 la comunicación entre micro:bit y p5.js se hacía con texto delimitado y saltos de línea, lo que obligaba a usar readLine().
+En la unidad 5 el objetivo fue modificar la aplicación para soportar un protocolo binario, aplicando cabeceras, checksum y empaquetado con struct.
+
+Durante el proceso, ChatGPT me apoyó generando un nuevo código en p5.js (sketch).
+
+```
+'use strict';
+
+// ------------------ Variables micro:bit ------------------
+let port, reader;
+let microBitX = 0;
+let microBitY = 0;
+let microBitA = false;
+let microBitB = false;
+
+// Variables para detectar flancos (cambio de estado)
+let lastMicroBitA = false;
+let lastMicroBitB = false;
+
+const WAIT_MICROBIT_CONNECTION = 0;
+const RUNNING = 1;
+let state = WAIT_MICROBIT_CONNECTION;
+
+// ------------------ Generative Design vars (tu código original) ------------------
+var tileCount = 1;
+var actRandomSeed = 0;
+
+var colorLeft;
+var colorRight;
+
+var alphaLeft = 0;
+var alphaRight = 100;
+
+var transparentLeft = false;
+var transparentRight = false;
+
+// ------------------ Prueba / debug / simuladores ------------------
+let simulateCorrupt = false;      // presiona 'C' para toggle
+let simulateHighRate = false;     // presiona 'H' para toggle high-rate
+let simulateASCII = false;        // presiona 'A' para toggle ASCII fallback
+let highRateInterval = null;
+let binaryBuffer = new Uint8Array(); // buffer acumulador para binario
+let asciiBuffer = "";                // buffer para ascii cuando esté activo
+const PACKET_SIZE = 8;               // 1 header + 6 data + 1 checksum
+
+// Texto de ayuda en pantalla
+let helpText = [
+  "Teclas:",
+  "C - Toggle: simular corrupcion de paquetes (checksum)",
+  "G - Inyectar basura (garbage) en el stream (resync test)",
+  "H - Toggle: Iniciar/Detener high-rate simulation (stress)",
+  "A - Toggle: Forzar modo ASCII (fallback / compatibilidad)",
+  "S - Simular un paquete valido (para pruebas sin micro:bit)",
+  "L - Limpiar consola (solo UI)",
+  "Conectar micro:bit: usa el boton en tu index.html o llama connectBtnClick()"
+];
+
+// ------------------ Setup ------------------
+function setup() {
+  createCanvas(600, 600);
+  colorMode(HSB, 360, 100, 100, 100);
+
+  colorRight = color(0, 0, 0, alphaRight);
+  colorLeft = color(323, 100, 77, alphaLeft);
+  textSize(12);
+
+  // Si no tienes el boton en index.html puedes crearlo aquí (opcional)
+  // let btn = createButton("Conectar micro:bit");
+  // btn.position(10, 10);
+  // btn.mousePressed(connectBtnClick);
+}
+
+// ------------------ Draw ------------------
+function draw() {
+  // Mostrar ayuda y flags arriba
+  push();
+  noStroke();
+  fill(0, 0, 100, 90);
+  rect(6, 6, 260, 120, 6);
+  fill(0);
+  for (let i = 0; i < helpText.length; i++) {
+    text(helpText[i], 12, 22 + i * 12);
+  }
+  text(`SimCorrupt: ${simulateCorrupt}`, 12, 22 + helpText.length * 12);
+  text(`HighRate: ${simulateHighRate}`, 12, 22 + helpText.length * 12 + 12);
+  text(`ASCII forced: ${simulateASCII}`, 12, 22 + helpText.length * 12 + 24);
+  pop();
+
+  if (state === WAIT_MICROBIT_CONNECTION) {
+    // Si estás conectado por simulacion o por puerto el state se puede forzar a RUNNING
+    if (!simulateHighRate && !simulateASCII) {
+      // draw background message
+      push();
+      fill(0);
+      textAlign(CENTER, CENTER);
+      text("Haz click en 'Conectar micro:bit' (index.html) o presiona 'S' para simular paquete", width / 2, height / 2);
+      pop();
+      return;
+    }
+  }
+
+  if (state === RUNNING || simulateHighRate || simulateASCII) {
+    clear();
+
+    // Reemplazar mouse con inclinación del micro:bit
+    let mappedX = map(microBitX, -1024, 1024, 0, width);
+    let mappedY = map(microBitY, -1024, 1024, 0, height);
+
+    strokeWeight(max(1, mappedX / 15));
+    randomSeed(actRandomSeed);
+    tileCount = max(1, int(mappedY / 15));
+
+    for (var gridY = 0; gridY < tileCount; gridY++) {
+      for (var gridX = 0; gridX < tileCount; gridX++) {
+        var posX = width / tileCount * gridX;
+        var posY = height / tileCount * gridY;
+
+        alphaLeft = transparentLeft ? gridY * 10 : 100;
+        colorLeft = color(
+          hue(colorLeft),
+          saturation(colorLeft),
+          brightness(colorLeft),
+          alphaLeft
+        );
+
+        alphaRight = transparentRight ? 100 - gridY * 10 : 100;
+        colorRight = color(
+          hue(colorRight),
+          saturation(colorRight),
+          brightness(colorRight),
+          alphaRight
+        );
+
+        var toggle = int(random(0, 2));
+
+        if (toggle == 0) {
+          stroke(colorLeft);
+          line(
+            posX,
+            posY,
+            posX + (width / tileCount) / 2,
+            posY + height / tileCount
+          );
+          line(
+            posX + (width / tileCount) / 2,
+            posY,
+            posX + width / tileCount,
+            posY + height / tileCount
+          );
+        }
+
+        if (toggle == 1) {
+          stroke(colorRight);
+          line(
+            posX,
+            posY + width / tileCount,
+            posX + (height / tileCount) / 2,
+            posY
+          );
+          line(
+            posX + (height / tileCount) / 2,
+            posY + width / tileCount,
+            posX + (height / tileCount),
+            posY
+          );
+        }
+      }
+    }
+
+    // --------- Micro:bit buttons control (solo en "click") ---------
+    if (!lastMicroBitA && microBitA) {
+      actRandomSeed = random(100000);
+    }
+
+    if (!lastMicroBitB && microBitB) {
+      if (colorsEqual(colorLeft, color(273, 73, 51, alphaLeft))) {
+        colorLeft = color(323, 100, 77, alphaLeft);
+      } else {
+        colorLeft = color(273, 73, 51, alphaLeft);
+      }
+    }
+
+    // Actualizar estados anteriores
+    lastMicroBitA = microBitA;
+    lastMicroBitB = microBitB;
+  }
+}
+
+// ------------------ Mouse & Keys originales ------------------
+function mousePressed() {
+  actRandomSeed = random(100000);
+}
+
+function keyReleased() {
+  // Atajos para pruebas / retos
+  if (key === 'C' || key === 'c') {
+    simulateCorrupt = !simulateCorrupt;
+    console.log("simulateCorrupt:", simulateCorrupt);
+  }
+  if (key === 'G' || key === 'g') {
+    // inyectar basura: bytes random antes del paquete correcto
+    console.log("Inyectando basura en stream...");
+    let garbage = new Uint8Array([1,2,3,9,255,128,77,33,44]);
+    processIncomingBytes(garbage);
+  }
+  if (key === 'H' || key === 'h') {
+    simulateHighRate = !simulateHighRate;
+    if (simulateHighRate) startHighRateSim();
+    else stopHighRateSim();
+    console.log("simulateHighRate:", simulateHighRate);
+  }
+  if (key === 'A' || key === 'a') {
+    simulateASCII = !simulateASCII;
+    console.log("simulateASCII:", simulateASCII);
+    // si forzamos ASCII también ponemos state RUNNING para que dibuje
+    if (simulateASCII) state = RUNNING;
+  }
+  if (key === 'S' || key === 's') {
+    // Simular un paquete válido con valores de prueba (sin micro:bit)
+    console.log("Simular paquete valido (X=200, Y=-100, A=1, B=0)");
+    let pack = buildPacket(200, -100, 1, 0);
+    processIncomingBytes(pack);
+    state = RUNNING;
+  }
+  if (key === 'L' || key === 'l') {
+    console.clear();
+  }
+  // Retener otras teclas originales
+  if (key == 's' || key == 'S') saveCanvas(gd ? gd.timestamp() : Date.now(), 'png');
+  if (key == '1') {
+    if (colorsEqual(colorLeft, color(273, 73, 51, alphaLeft))) {
+      colorLeft = color(323, 100, 77, alphaLeft);
+    } else {
+      colorLeft = color(273, 73, 51, alphaLeft);
+    }
+  }
+  if (key == '2') {
+    if (colorsEqual(colorRight, color(0, 0, 0, alphaRight))) {
+      colorRight = color(192, 100, 64, alphaRight);
+    } else {
+      colorRight = color(0, 0, 0, alphaRight);
+    }
+  }
+  if (key == '3') transparentLeft = !transparentLeft;
+  if (key == '4') transparentRight = !transparentRight;
+  if (key == '0') {
+    transparentLeft = false;
+    transparentRight = false;
+    colorLeft = color(323, 100, 77, alphaLeft);
+    colorRight = color(0, 0, 0, alphaRight);
+  }
+}
+
+function colorsEqual(col1, col2) {
+  return col1.toString() == col2.toString();
+}
+
+// ------------------ Serial Communication ------------------
+async function connectBtnClick() {
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    reader = port.readable.getReader();
+    state = RUNNING;
+    console.log("Conectado: empezando readLoop()");
+    readLoop();
+  } catch (err) {
+    console.error("Error al conectar:", err);
+  }
+}
+
+async function readLoop() {
+  // Lee desde el puerto y pasa los bytes al procesador común
+  while (true) {
+    try {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+      processIncomingBytes(value);
+    } catch (err) {
+      console.error("readLoop error:", err);
+      break;
+    }
+  }
+}
+
+// Procesador central — recibe Uint8Array (desde puerto o desde simuladores)
+function processIncomingBytes(newBytes) {
+  if (simulateASCII) {
+    // modo ASCII: decodificar texto con saltos de linea
+    let s = new TextDecoder().decode(newBytes);
+    asciiBuffer += s;
+    let lines = asciiBuffer.split("\n");
+    asciiBuffer = lines.pop();
+    for (let line of lines) {
+      let parts = line.trim().split(",");
+      if (parts.length >= 4) {
+        microBitX = int(parts[0]);
+        microBitY = int(parts[1]);
+        microBitA = parts[2] === "True" || parts[2] === "1" || parts[2] === "true";
+        microBitB = parts[3] === "True" || parts[3] === "1" || parts[3] === "false" ? parts[3] === "True" || parts[3] === "1" || parts[3] === "true" : parts[3] === "True" || parts[3] === "1" || parts[3] === "true";
+        console.log("ASCII recv ->", microBitX, microBitY, microBitA, microBitB);
+      }
+    }
+    state = RUNNING;
+    return;
+  }
+
+  // BINARIO (normal)
+  // Concatenar bytes al buffer global
+  let tmp = new Uint8Array(binaryBuffer.length + newBytes.length);
+  tmp.set(binaryBuffer, 0);
+  tmp.set(newBytes, binaryBuffer.length);
+  binaryBuffer = tmp;
+
+  // Procesar paquetes de PACKET_SIZE
+  while (binaryBuffer.length >= PACKET_SIZE) {
+    // Buscar cabecera 0xAA
+    let start = binaryBuffer.indexOf(0xAA);
+    if (start === -1) {
+      // no hay cabecera → descartar todo
+      console.warn("No header found, clearing buffer (garbage).");
+      binaryBuffer = new Uint8Array();
+      break;
+    }
+    if (binaryBuffer.length < start + PACKET_SIZE) {
+      // aún no hay paquete completo
+      break;
+    }
+
+    let packet = binaryBuffer.slice(start, start + PACKET_SIZE);
+    // avanzar buffer
+    binaryBuffer = binaryBuffer.slice(start + PACKET_SIZE);
+
+    // (TEST) si simulateCorrupt -> muta paquete aleatoriamente antes de validar
+    if (simulateCorrupt && Math.random() < 0.4) {
+      // flip un byte de datos para provocar checksum mismatch
+      let idx = 2; // (por ejemplo) mutar segundo byte de datos
+      packet[idx] = packet[idx] ^ 0xFF;
+    }
+
+    // Validar checksum
+    let data = packet.slice(1, 7);
+    let checksum = packet[7];
+    let sum = 0;
+    for (let b of data) sum = (sum + b) & 0xFF;
+    if ((sum % 256) !== (checksum & 0xFF)) {
+      console.warn("Checksum incorrecto, paquete descartado. sum:", sum, "chk:", checksum);
+      continue;
+    }
+
+    // Decodificar datos (big-endian, como struct.pack('>2h2B'))
+    let dv = new DataView(packet.buffer, packet.byteOffset, packet.byteLength);
+    microBitX = dv.getInt16(1, false);
+    microBitY = dv.getInt16(3, false);
+    microBitA = dv.getUint8(5) === 1;
+    microBitB = dv.getUint8(6) === 1;
+
+    // Debug
+    console.log(`BIN recv -> X=${microBitX}, Y=${microBitY}, A=${microBitA}, B=${microBitB}`);
+    state = RUNNING;
+  }
+}
+
+// ------------------ Util: construir paquete binario igual que el micro:bit ------------------
+function buildPacket(xValue, yValue, aState, bState) {
+  // produce Uint8Array de 8 bytes: 0xAA + 2h + 2h + 2B + checksum
+  // empaquetar manualmente big-endian
+  let buffer = new Uint8Array(8);
+  buffer[0] = 0xAA;
+  // xValue (int16) big-endian
+  let xv = xValue & 0xFFFF;
+  buffer[1] = (xv >> 8) & 0xFF;
+  buffer[2] = xv & 0xFF;
+  // yValue
+  let yv = yValue & 0xFFFF;
+  buffer[3] = (yv >> 8) & 0xFF;
+  buffer[4] = yv & 0xFF;
+  // aState, bState
+  buffer[5] = aState ? 1 : 0;
+  buffer[6] = bState ? 1 : 0;
+  // checksum over bytes 1..6
+  let sum = 0;
+  for (let i = 1; i <= 6; i++) sum = (sum + buffer[i]) & 0xFF;
+  buffer[7] = sum % 256;
+  return buffer;
+}
+
+// ------------------ Simulador de alta tasa ------------------
+function startHighRateSim() {
+  if (highRateInterval) clearInterval(highRateInterval);
+  highRateInterval = setInterval(() => {
+    // Generar valores aleatorios o basados en sin/cos para ver movimiento
+    let t = millis() / 1000;
+    let xv = int(800 * Math.sin(t * 2));
+    let yv = int(800 * Math.cos(t * 1.5));
+    let a = (Math.random() > 0.98) ? 1 : 0;
+    let b = (Math.random() > 0.98) ? 1 : 0;
+    let pack = buildPacket(xv, yv, a, b);
+    processIncomingBytes(pack);
+  }, 20); // 50Hz
+}
+
+function stopHighRateSim() {
+  if (highRateInterval) {
+    clearInterval(highRateInterval);
+    highRateInterval = null;
+  }
+}
+
+```
+Propósito de este código:
+
+- Reemplazar la lectura basada en texto por una lectura binaria usando DataView.
+- Interpretar correctamente los valores del acelerómetro y botones enviados en crudo desde el micro:bit.
+- Validar los paquetes con cabecera (0xAA) y checksum antes de procesarlos.
+- La intención de este código fue hacer que la aplicación pudiera funcionar de la misma forma que antes, pero ahora con datos binarios más eficientes y seguros.
+
+🔹 **Reto 1: Visualización del acelerómetro en tiempo real**
+
+**Objetivo:**
+
+Probar que el protocolo binario implementado transmite los valores del acelerómetro de forma confiable y que el nuevo sketch de p5.js los interpreta correctamente.
+
+**Procedimiento:**
+
+Moví el micro:bit en distintas direcciones.
+
+En p5.js, el sketch mapeaba x e y a la pantalla para reemplazar el movimiento del mouse.
+
+**Resultados:**
+
+
+https://github.com/user-attachments/assets/7e0065ad-7bc0-414b-b1ab-148e460da1c9
+
+Los valores variaban de manera fluida y coherente con la inclinación del micro:bit.
+
+La aplicación respondía en tiempo real, confirmando que el código generado funcionaba como puente binario.
+
+**Conclusión del reto:**
+
+El nuevo sketch de p5.js cumplió su función: los datos binarios podían visualizarse correctamente, validando la comunicación entre micro:bit y la aplicación.
+
+
+🔹 **Reto 2: Validación con checksum**
+
+**Objetivo:**
+
+Verificar que el protocolo detecta errores en la transmisión y que el código los maneja adecuadamente.
+
+**Procedimiento:**
+
+En el micro:bit forcé un checksum incorrecto.
+
+El nuevo código en p5.js revisaba cada paquete recibido y lo descartaba si la suma no coincidía.
+
+**Resultados:**
+
+https://github.com/user-attachments/assets/ee4883bd-a714-4d22-93bc-f49fb313ca14
+
+Los paquetes defectuosos fueron ignorados.
+
+La consola mostró advertencias en lugar de valores corruptos.
+
+**Conclusión del reto:**
+
+El checksum se integró correctamente al flujo del sketch. Esto asegura que el sistema es robusto y no se corrompe con datos inválidos.
+
+
+
+Hubieron más retos pero no me dio el tiempo de completarlos, por eso el código tan largo.
+
+
 
