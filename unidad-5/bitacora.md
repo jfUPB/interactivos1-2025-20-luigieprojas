@@ -2,11 +2,12 @@
 
 **Autoevaluación — Unidad 5:** 
 
-Resumen breve: En esta unidad diseñé, implementé y verifiqué un protocolo de comunicación binario entre un micro:bit y un sketch en p5.js. Realicé experimentos comparativos (ASCII vs binario), añadí framing y checksum, detecté y resolví problemas de sincronización, documenté resultados con capturas y propuse pruebas de robustez. Considero que el trabajo demuestra un nivel de dominio avanzado con algunos retos pendientes menores, por eso propongo una nota final de 4.7 / 5.0. A continuación explico criterio por criterio.
+En esta unidad diseñé, implementé y verifiqué un protocolo de comunicación binario entre un micro:bit y un sketch en p5.js. Realicé experimentos comparativos (ASCII vs binario), añadí framing y checksum, detecté y resolví problemas de sincronización, documenté resultados con capturas y propuse pruebas de robustez. Considero que el trabajo demuestra un nivel de dominio avanzado con algunos retos pendientes menores, por eso propongo una nota final de 4.7 / 5.0. A continuación explico criterio por criterio.
 
 **1. Profundidad de la indagación — Calificación propuesta: 4.8 / 5.0**
 
-Justificación (parágrafo):
+**Justificación:**
+
 Considero que he demostrado preguntas de indagación que van más allá del “cómo” del código y tocan el “porqué” del diseño del protocolo: comparé ASCII vs binario, discutí trade-offs (legibilidad vs eficiencia), planteé framing y checksum como soluciones a la desincronización y analicé el impacto del endianness y el tamaño fijo de paquete en la robustez. Además propuse experimentos que responden esas preguntas (ver más abajo). No es 5.0 puro porque quedaron retos sin terminar por falta de tiempo (mencionado en la bitácora), pero la reflexión y las preguntas son de nivel excelente.
 
 **Evidencias en la bitácora:**
@@ -19,9 +20,9 @@ Código y experimento que muestra struct.pack('>2h2B', xValue, yValue, int(aStat
 Captura: [resultado en binario](https://github.com/user-attachments/assets/c9de5de0-6337-4be3-bb87-6ed0d02e373b)
 .
 
-Preguntas planteadas en la bitácora: “¿Qué pasaría si se omitiera el \n?”, “¿Qué ventajas/desventajas en ASCII vs binario?”, y la consideración de framing/checksum como soluciones.
+**Preguntas planteadas en la bitácora:** “¿Qué pasaría si se omitiera el \n?”, “¿Qué ventajas/desventajas en ASCII vs binario?”, y la consideración de framing/checksum como soluciones.
 
-Comentario final del criterio: la indagación es profunda, plantea hipótesis y contrasta opciones; faltó completar algunos experimentos adicionales que sugerí, por eso 4.8 en vez de 5.0.
+**Comentario final del criterio:** la indagación es profunda, plantea hipótesis y contrasta opciones; faltó completar algunos experimentos adicionales que sugerí, por eso 4.8 en vez de 5.0.
 
 **2. Calidad de la experimentación — Calificación propuesta: 4.6 / 5.0**
 
@@ -74,7 +75,8 @@ Documentación de errores de desarrollo y cómo se corrigieron: ejemplo Referenc
 
 **4. Apropiación y articulación de conceptos — Calificación propuesta: 4.7 / 5.0**
 
-**Justificación (parágrafo):**
+**Justificación:**
+
 Considero que he demostrado comprensión clara de los conceptos centrales: framing, checksum, empaquetado binario (struct.pack), DataView en JS, detección de flancos para eventos (A pressed / B released), y la distinción entre enviar estados vs enviar eventos. Los conceptos están articulados y aplicados al sistema completo (micro:bit → puerto serie → p5.js). No es 5.0 por pequeños detalles de formalización (por ejemplo, una sola sección con un diagrama formal de estado/protocolo — aunque la lógica está bien descrita en el código).
 
 **Evidencias en la bitácora:**
@@ -109,4 +111,5 @@ Captura: [validación checksum](https://github.com/user-attachments/assets/e7d1c
 - **Suma:** 4.8 + 4.6 + 4.7 + 4.7 = 18.8
 - **Promedio:** 18.8 / 4 = 4.7
 - **Nota:** 4.7
+
 
