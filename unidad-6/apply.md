@@ -376,6 +376,12 @@ Mueve la ventana de page2 un poco para que envíe una actualización.
 
 ¿Qué pasó? ¿Por qué?
 
+R/ 
+
+Al comentar esa línea, la página 2 ya no envía la primera actualización de su estado al conectarse. Por eso, al mover la ventana después, page1 no recibe los datos iniciales de posición de page2 y el sistema queda desincronizado.
+En la consola se ve que no llega ningún “update” inicial desde page2.
+Esto pasa porque el socket.emit() dentro de connect es el que hace que page2 transmita sus coordenadas actuales al servidor apenas se conecta, y sin eso no hay estado base compartido.
+
 🧐🧪✍️
 Experimenta
 
@@ -385,12 +391,23 @@ Mueve la ventana de page1. Observa la consola del navegador de page2. ¿Qué dat
 
 Mueve la ventana de page2. Observa la consola de page1. ¿Qué pasa? ¿Por qué?
 
+R/ Al mover la ventana de page1, en la consola de page2 se muestran los datos de posición de page1 (por ejemplo, x, y, width, height), porque page1 está emitiendo actualizaciones y page2 las está recibiendo mediante el socket.
+
+Al mover la ventana de page2, en la consola de page1 ocurre lo mismo: aparecen los datos de page2.
+
+Esto sucede porque ambas páginas están conectadas al mismo servidor Socket.IO, y cada vez que una se mueve, emite un evento de actualización, que el servidor reenvía a la otra. Es básicamente una sincronización en tiempo real entre ventanas. 
+
 🧐🧪✍️
 Experimenta
 
 Observa checkWindowPosition() en page2.js y modifica el código del if para comprobar si el código dentreo de este se ejecuta.
 Mueve cada ventana y observa las consolas.
 ¿Qué puedes concluir y por qué?
+
+R/ Después de modificar el if (por ejemplo, con un console.log("Se ejecutó el if")), se puede ver que el código solo se ejecuta cuando la posición o el tamaño real de la ventana cambia.
+
+Esto permite concluir que checkWindowPosition() está diseñado para detectar cambios reales en la posición/tamaño y evitar enviar actualizaciones innecesarias al servidor. Es una forma eficiente de solo emitir eventos cuando hay algo nuevo que sincronizar.
+
 🧐🧪✍️
 Experimenta
 (¡Sé creativo!)
@@ -398,3 +415,263 @@ Experimenta
 Cambia el background(220) para que dependa de la distancia entre las ventanas. Puedes calcular la magnitud del resultingVector usando let distancia = resultingVector.mag(); y luego usa map() para convertir esa distancia a un valor de gris o color. background(map(distancia, 0, 1000, 255, 0)); (ajusta el rango 0-1000 según sea necesario).
 
 Inventa otra modificación creativa.
+
+# Reto 
+
+Códigos:
+
+client-left.html:
+
+```
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Casa Spawner</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
+</head>
+<body>
+  <div id="instructions-left" style="
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(255,255,255,0.85);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: sans-serif;
+    font-size: 14px;
+    max-width: 220px;
+    line-height: 1.4;
+  ">
+    <strong>🏠 Casa Spawner</strong><br>
+    - Genera bolas automáticamente<br>
+    - No requiere controles
+  </div>
+
+<script>
+let socket = io();
+let balls = [];
+const colors = ['yellow', 'blue', 'red'];
+const numBalls = 10;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  spawnBalls();
+  socket.emit('spawnBalls', balls);
+}
+
+function spawnBalls() {
+  balls = [];
+  for (let i = 0; i < numBalls; i++) {
+    balls.push({
+      id: i + '-' + Date.now(),
+      x: random(50, width - 50),
+      y: random(50, height - 50),
+      r: random(10, 30),
+      color: random(colors),
+      vx: random(-2, 2),
+      vy: random(-2, 2),
+    });
+  }
+}
+
+function draw() {
+  background(220);
+
+  for (let ball of balls) {
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    if (ball.x < 0 || ball.x > width) ball.vx *= -1;
+    if (ball.y < 0 || ball.y > height) ball.vy *= -1;
+
+    fill(ball.color);
+    noStroke();
+    circle(ball.x, ball.y, ball.r * 2);
+  }
+
+  socket.emit('updateBalls', balls);
+}
+
+socket.on('killBall', (ballId) => {
+  balls = balls.filter(b => b.id !== ballId);
+});
+</script>
+</body>
+</html>
+```
+
+client-right.html:
+
+```
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pistola</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
+</head>
+<body>
+  <div id="instructions-right" style="
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.85);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: sans-serif;
+    font-size: 14px;
+    max-width: 220px;
+    line-height: 1.4;
+  ">
+    <strong>🎮 Controles (Pistola)</strong><br>
+    - Z = Amarillo<br>
+    - X = Azul<br>
+    - C = Rojo<br>
+    - Ctrl = Disparar<br>
+    <hr>
+    Mata 2 bolas → +1 bala automática
+  </div>
+
+<script>
+let socket = io();
+let balls = [];
+let bullets = [];
+let gunY;
+let selectedColor = 'yellow';
+let ammo = 10;
+let kills = 0;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  gunY = height / 2;
+
+  socket.on('state', (data) => {
+    balls = data.balls;
+    bullets = data.bullets;
+  });
+
+  socket.on('spawnBalls', (data) => balls = data);
+  socket.on('updateBalls', (data) => balls = data);
+  socket.on('shoot', (data) => bullets.push(data));
+  socket.on('updateBullets', (data) => bullets = data);
+  socket.on('killBall', (ballId) => {
+    balls = balls.filter(b => b.id !== ballId);
+  });
+}
+
+function draw() {
+  background(220);
+  drawGun();
+  drawBalls();
+  drawBullets();
+  drawHUD();
+}
+
+function drawGun() {
+  gunY = constrain(mouseY, 30, height - 30);
+  fill(selectedColor);
+  rect(width - 30, gunY - 20, 20, 40);
+}
+
+function drawBalls() {
+  for (let ball of balls) {
+    fill(ball.color);
+    noStroke();
+    circle(ball.x, ball.y, ball.r * 2);
+  }
+}
+
+function drawBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    let b = bullets[i];
+    b.x += b.vx;
+
+    fill(b.color);
+    rect(b.x, b.y, 10, 4);
+
+    // Verificar colisiones con bolas
+    for (let j = balls.length - 1; j >= 0; j--) {
+      let ball = balls[j];
+      let d = dist(b.x, b.y, ball.x, ball.y);
+      if (d < ball.r && b.color === ball.color) {
+        socket.emit('killBall', ball.id);
+        kills++;
+        if (kills % 2 === 0) ammo++;
+        bullets.splice(i, 1);
+        break;
+      }
+    }
+
+    if (b.x < 0 || b.x > width) bullets.splice(i, 1);
+  }
+  socket.emit('updateBullets', bullets);
+}
+
+function keyPressed() {
+  if (key === 'z' || key === 'Z') selectedColor = 'yellow';
+  if (key === 'x' || key === 'X') selectedColor = 'blue';
+  if (key === 'c' || key === 'C') selectedColor = 'red';
+
+  if (keyCode === CONTROL && ammo > 0) {
+    shootBullet();
+  }
+}
+
+function shootBullet() {
+  let bullet = {
+    x: width - 40,
+    y: gunY,
+    vx: -8,
+    color: selectedColor
+  };
+  bullets.push(bullet);
+  ammo--;
+  socket.emit('shoot', bullet);
+}
+
+function drawHUD() {
+  fill(0);
+  textSize(16);
+  text(`Munición: ${ammo}`, 20, 30);
+  text(`Kills: ${kills}`, 20, 55);
+}
+</script>
+</body>
+</html>
+```
+
+server.js:
+
+```
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.use(express.static('public'));
+
+io.on('connection', (socket) => {
+  console.log('Cliente conectado:', socket.id);
+
+  socket.on('ball-cross', (ballData) => {
+    socket.broadcast.emit('ball-cross', ballData);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Cliente desconectado:', socket.id);
+  });
+});
+
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+```
+
+
