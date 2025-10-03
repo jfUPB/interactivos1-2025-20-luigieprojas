@@ -1,4 +1,4 @@
-**Actividad 01**
+# Actividad 01
 
 **🧐✍️ Reporta en tu bitácora**
 
@@ -24,7 +24,7 @@ https://github.com/user-attachments/assets/06c30a8d-41ed-48d3-8e0c-f261298eda8d
 
 **Describe qué sucede en ambas páginas del navegador cuando mueves una de las ventanas. ¿Cambia algo visualmente? ¿Qué mensajes aparecen (si los hay) en la consola del navegador (usualmente accesible con F12 -> Pestaña Consola) y en la terminal del servidor?**
 
-**Actividad 02**
+# Actividad 02
 
 **🧐✍️ Reporta en tu bitácora**
 
@@ -199,7 +199,7 @@ Este tipo de comunicación en tiempo real se usa, por ejemplo, en chats, videoju
 
 Yo entiendo que la gran ventaja de WebSockets es que permiten experiencias mucho más dinámicas e “instantáneas”, algo clave hoy en día para apps interactivas. HTTP sigue siendo útil, pero para comunicación continua, WebSockets marcan una gran diferencia.
 
-Actividad 03
+# Actividad 03
 
 🧐🧪✍️ Experimenta
 
@@ -227,8 +227,8 @@ R/ Esto me muestra claramente que el servidor asocia cada URL exactamente con la
 
 En otras palabras, el servidor “escucha” rutas específicas, y si la petición no coincide exactamente con alguna, devuelve un error.
 
-🧐🧪✍️
-Experimenta
+**🧐🧪✍️
+Experimenta**
 
 Asegúrate de que el servidor esté corriendo (npm start).
 
@@ -255,8 +255,6 @@ Me aparece este mensaje: User disconnected - ID: eNXkcIhydOuN7g8sAAAF. Y sí es 
 **Captura de la terminal cuando cierro ambas páginas:**
 
 <img width="581" height="368" alt="image" src="https://github.com/user-attachments/assets/e3a7e361-ef0a-4d5b-a09f-438bb50fc093" />
-
-
 
 🧐🧪✍️
 Experimenta
@@ -303,6 +301,19 @@ Se ve el mismo mensaje que moviendo la /page 1 solo que ahora es win2update por 
 
 Experimento clave: cambia socket.broadcast.emit(‘getdata’, page1); por socket.emit(‘getdata’, page1); (quitando broadcast). Reinicia el servidor, abre ambas páginas. Mueve page1. ¿Se actualiza la visualización en page2? ¿Por qué sí o por qué no? (Pista: ¿A quién le envía el mensaje socket.emit?). Restaura el código a broadcast.emit.
 
+<img width="1365" height="767" alt="image" src="https://github.com/user-attachments/assets/7434dc07-30f8-490f-a035-4cadb5e2a69a" />
+
+https://github.com/user-attachments/assets/3d433e53-76da-40f6-a6c5-8cfd4b2aecee
+
+Al hacer esta modificación, Cómo se puede apreciar las ventanas no se sincronizan ni se actualizan.  cuando cambio socket.broadcast.emit('getdata', page1); por socket.emit('getdata', page1); y luego reinicio el servidor, al mover la ventana en page1, la visualización en page2 ya no se actualiza. Esto pasa porque:
+
+- socket.emit() solo envía el mensaje al mismo cliente que lo emitió, es decir, a la pestaña de page1.
+- En cambio, socket.broadcast.emit() envía el mensaje a todos los demás clientes conectados, excepto al que lo envió originalmente.
+
+Entonces, al quitar broadcast, el servidor deja de “informar” a la otra pestaña (page2) sobre los cambios, y por eso no se sincronizan.
+Por eso es importante restaurar el código original con broadcast.emit, ya que así se garantiza que los otros clientes reciban las actualizaciones en tiempo real.
+
+
 🧐🧪✍️ Experimenta
 
 Detén el servidor.
@@ -317,7 +328,7 @@ Intenta abrir http://localhost:3001/page1. ¿Funciona?
 
 ¿Qué aprendiste sobre la variable port y la función listen? Restaura el puerto a 3000.
 
-Actividad 04
+# Actividad 04
 
 🧐🧪✍️
 Experimenta
@@ -330,7 +341,29 @@ Detén el servidor Node.js (Ctrl+C).
 
 Refresca la página page2.html. Observa la consola del navegador. ¿Ves algún error relacionado con la conexión? ¿Qué indica?
 
-Vuelve a iniciar el servidor y refresca la página. ¿Desaparecen los errores?
+https://github.com/user-attachments/assets/e5170a48-8ae2-41e1-a57d-a3e339e1e631 
+
+Primero me aparece el Connected with ID, el Sync Status: NOT SYNCED, Received valid remote data, Sync status: NOT SYNCED. 
+
+Y me aparece un error en la consola: GET http://localhost:3000/socket.io/?EIO=4&transport=polling&t=Pchb7WT
+
+Según lo que investigué, ese error que me aparece en la consola, significa que la página del navegador está intentando reconectarse al servidor de Socket.IO, pero el servidor ya no está activo (porque lo detuviste con Ctrl+C).
+
+En otras palabras, el navegador sigue ejecutando el código JavaScript que trata de comunicarse con el servidor, pero como este ya no está escuchando en el puerto 3000, la petición falla y aparece ese error.
+
+Este tipo de error es completamente normal cuando el servidor se cae o se apaga: la app cliente (en este caso page2) no puede establecer la conexión, así que lanza un error de red. 
+
+Básicamente, indica que la conexión en tiempo real entre cliente y servidor se perdió.
+
+**Vuelve a iniciar el servidor y refresca la página. ¿Desaparecen los errores?**
+
+https://github.com/user-attachments/assets/f57e68c8-6bd6-490d-a1ff-36eb6fe10f18
+
+Cómo se aprecia y comparando con la captura de vídeo anterior el error de "GET http://localhost:3000/socket.io/?EIO=4&transport=polling&t=Pchb7WT" 
+
+Desapareció pero los mensajes anteriores no desaparecieron.
+
+Los mensajes anteriores (como “Connected with ID”, “Sync Status: NOT SYNCED”, etc.) siguen visibles en la consola porque la consola no se “limpia” automáticamente al recargar; simplemente muestra un nuevo historial de eventos debajo de lo que ya estaba.
 
 🧐🧪✍️
 Experimenta
