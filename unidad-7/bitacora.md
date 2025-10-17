@@ -178,6 +178,16 @@ En concreto:
 
 Estos mensajes son muy útiles para depurar errores y entender el flujo de comunicación, ya que confirman que los eventos connection, message y disconnect están ocurriendo como se espera.  
 
+# Reto 
+
+**Evidencia Reto Funcionando**
+
+https://github.com/user-attachments/assets/415c96d0-b34a-4703-abc1-43c268151864
+
+**Estructura código completo** 
+
+<img width="167" height="544" alt="image" src="https://github.com/user-attachments/assets/57264237-2e7d-4b2a-8a1c-4703321bb76e" />
+
 
 
 
